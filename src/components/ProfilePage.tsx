@@ -145,39 +145,39 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
       {/* Profile Header & Overall Progress Strip */}
       <section className="bg-[#121824] border border-slate-800/80 rounded-xl overflow-hidden">
-        <div className="p-6 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="p-4 sm:p-6 border-b border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
             {user.photoURL ? (
               <img
                 src={user.photoURL}
                 alt={profile.displayName}
                 referrerPolicy="no-referrer"
-                className="w-12 h-12 rounded-xl object-cover border border-slate-700 shrink-0"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover border border-slate-700 shrink-0"
               />
             ) : (
-              <div className="w-12 h-12 rounded-xl bg-sky-500/15 border border-sky-500/40 flex items-center justify-center text-sm font-mono text-sky-300 shrink-0">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-sky-500/15 border border-sky-500/40 flex items-center justify-center text-sm font-mono text-sky-300 shrink-0">
                 {profile.displayName.slice(0, 2).toUpperCase()}
               </div>
             )}
-            <div className="space-y-0.5">
+            <div className="space-y-0.5 min-w-0">
               <div className="text-xs font-mono text-sky-400">
                 Lv. {hunterStats.level} · {hunterStats.rank}
               </div>
-              <h2 className="font-display text-lg font-semibold text-slate-50">
+              <h2 className="font-display text-base sm:text-lg font-semibold text-slate-50 truncate">
                 {profile.displayName}
               </h2>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-slate-400 truncate">
                 {profile.roleTitle} · Target {profile.weeklyHoursTarget}h / week
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             {onOpenRecall && (
               <button
                 type="button"
                 onClick={onOpenRecall}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-semibold text-sky-200 transition-colors cursor-pointer whitespace-nowrap shrink-0 tabular-nums"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-semibold text-sky-200 transition-colors cursor-pointer whitespace-nowrap shrink-0 tabular-nums"
               >
                 <Brain className="w-3.5 h-3.5" />
                 <span>Recall ({dueCardsCount} due)</span>
@@ -186,7 +186,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             <button
               type="button"
               onClick={() => signOut(auth)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-slate-700 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-slate-700 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Sign out</span>
@@ -194,10 +194,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-slate-800/80">
-          <div className="p-5 space-y-1">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-slate-800/80">
+          <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
             <div className="text-xs text-slate-400">Overall Mastery</div>
-            <div className="font-mono text-2xl font-semibold text-slate-50 tabular-nums">
+            <div className="font-mono text-xl sm:text-2xl font-semibold text-slate-50 tabular-nums">
               {hunterStats.overallMastery}%
             </div>
             <div className="text-xs text-slate-500 font-mono tabular-nums">
@@ -205,9 +205,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
           </div>
 
-          <div className="p-5 space-y-1">
+          <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
             <div className="text-xs text-slate-400">System XP</div>
-            <div className="font-mono text-2xl font-semibold text-sky-300 tabular-nums">
+            <div className="font-mono text-xl sm:text-2xl font-semibold text-sky-300 tabular-nums">
               {hunterStats.totalXp}
             </div>
             <div className="text-xs text-slate-500 font-mono tabular-nums">
@@ -215,9 +215,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
           </div>
 
-          <div className="p-5 space-y-1">
+          <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
             <div className="text-xs text-slate-400">Weekly Focus</div>
-            <div className="font-mono text-2xl font-semibold text-slate-50 tabular-nums">
+            <div className="font-mono text-xl sm:text-2xl font-semibold text-slate-50 tabular-nums">
               {(totalWeeklyMinutes / 60).toFixed(1)}h
             </div>
             <div className="text-xs text-emerald-400 font-mono tabular-nums">
@@ -225,9 +225,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
           </div>
 
-          <div className="p-5 space-y-1">
+          <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
             <div className="text-xs text-slate-400">Milestones Earned</div>
-            <div className="font-mono text-2xl font-semibold text-amber-400 tabular-nums">
+            <div className="font-mono text-xl sm:text-2xl font-semibold text-amber-400 tabular-nums">
               {unlockedMilestones} / {milestones.length}
             </div>
             <div className="text-xs text-slate-500">Engineering achievements</div>
@@ -348,7 +348,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
       {/* Master Syllabus Inspector */}
       <section className="bg-[#121824] border border-slate-800/80 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 py-4 border-b border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <h3 className="font-display text-base font-semibold text-slate-100">
               Master Syllabus ({filteredSkills.length} Topics)
@@ -358,13 +358,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1 p-1 rounded-lg bg-[#0B0F17] border border-slate-800">
+          <div className="flex items-center gap-1 p-1 rounded-lg bg-[#0B0F17] border border-slate-800 overflow-x-auto max-w-full">
             {(['All', ...DOMAINS] as const).map((dom) => (
               <button
                 key={dom}
                 type="button"
                 onClick={() => onDomainFilterChange(dom)}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                className={`px-3 py-1.5 min-h-[36px] sm:min-h-0 rounded-md text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                   domainFilter === dom
                     ? 'bg-sky-500 text-slate-950 font-semibold'
                     : 'text-slate-400 hover:text-slate-100'
@@ -382,11 +382,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               key={skill.id}
               type="button"
               onClick={() => onSelectSkillId(skill.id)}
-              className="w-full text-left px-6 py-3.5 flex items-center justify-between gap-4 hover:bg-slate-800/25 transition-colors cursor-pointer"
+              className="w-full text-left px-4 sm:px-6 py-3.5 min-h-[56px] flex items-center justify-between gap-4 hover:bg-slate-800/25 transition-colors cursor-pointer"
             >
               <div className="min-w-0 space-y-0.5">
                 <div className="text-sm font-medium text-slate-100 truncate">{skill.title}</div>
-                <div className="text-xs font-mono text-slate-400">
+                <div className="text-xs font-mono text-slate-400 truncate">
                   {skill.domain} · {skill.tier}
                   {skill.priority && skill.priority !== 'Normal' ? ` · ${skill.priority}` : ''}
                   {skill.projectTag ? ` · ${skill.projectTag}` : ''}
@@ -403,7 +403,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
       {/* Slide-over Study Brief Drawer */}
       {selectedSkill && (
         <div
-          className={`fixed inset-0 z-40 flex justify-end ${
+          className={`fixed inset-0 z-50 flex justify-end ${
             jarvisOpen ? 'lg:justify-start lg:pr-[440px]' : ''
           }`}
         >
@@ -412,20 +412,20 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             onClick={() => onSelectSkillId(null)}
           />
           <aside
-            className={`relative z-10 w-full max-w-xl bg-[#121824] border-slate-800 h-full overflow-y-auto p-6 space-y-6 ${
-              jarvisOpen ? 'border-l lg:border-l-0 lg:border-r' : 'border-l'
+            className={`relative z-10 w-full sm:max-w-xl bg-[#121824] border-slate-800 h-full overflow-y-auto p-4 sm:p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] space-y-6 ${
+              jarvisOpen ? 'sm:border-l lg:border-l-0 lg:border-r' : 'sm:border-l'
             }`}
           >
-            <div className="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
-              <div className="space-y-1">
+            <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-4">
+              <div className="space-y-1 min-w-0">
                 <div className="text-xs font-mono text-sky-400">
                   {selectedSkill.domain} · {selectedSkill.tier}
                 </div>
-                <h3 className="font-display text-lg font-semibold text-slate-50">
+                <h3 className="font-display text-base sm:text-lg font-semibold text-slate-50">
                   {selectedSkill.title}
                 </h3>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 {onAskJarvis && (
                   <button
                     type="button"
@@ -434,7 +434,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         `Explain "${selectedSkill.title}" (${selectedSkill.domain}) in depth, including common production failure modes and how to pass its 45-minute lab.`
                       )
                     }
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-medium text-sky-200 transition-colors cursor-pointer whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-3 min-h-[38px] rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-medium text-sky-200 transition-colors cursor-pointer whitespace-nowrap"
                   >
                     <Bot className="w-3.5 h-3.5" />
                     <span>Ask JARVIS</span>
@@ -444,7 +444,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   type="button"
                   onClick={() => onSelectSkillId(null)}
                   aria-label="Close topic details"
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+                  className="min-w-[38px] min-h-[38px] flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>

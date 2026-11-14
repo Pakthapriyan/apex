@@ -8,11 +8,20 @@
     --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   }
 
-  html {
+  html,
+  body {
     font-family: var(--font-sans);
     background-color: #0b0f17;
     color: #f1f5f9;
     color-scheme: dark;
+    overflow-x: clip;
+  }
+
+  button,
+  a,
+  select,
+  summary {
+    touch-action: manipulation;
   }
 
   h1,
@@ -34,6 +43,10 @@
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Custom precision scrollbar */

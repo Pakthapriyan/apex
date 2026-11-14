@@ -613,12 +613,13 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
       <button
         type="button"
         onClick={() => onToggleOpen(true)}
-        className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#121824] hover:bg-slate-800 border border-sky-500/50 text-slate-100 text-xs font-semibold shadow-lg shadow-black/40 transition-colors cursor-pointer"
+        className="fixed bottom-20 right-3.5 md:bottom-5 md:right-5 z-40 inline-flex items-center gap-2.5 px-3.5 sm:px-4 min-h-[44px] py-2 rounded-xl bg-[#121824] hover:bg-slate-800 border border-sky-500/50 text-slate-100 text-xs font-semibold shadow-lg shadow-black/50 transition-colors cursor-pointer whitespace-nowrap"
         aria-label="Open JARVIS Mentor"
       >
         <Bot className="w-4 h-4 text-sky-400 shrink-0" />
-        <span>JARVIS Mentor</span>
-        <span className="font-mono text-[11px] text-slate-400 border-l border-slate-700 pl-2">
+        <span>JARVIS</span>
+        <span className="hidden sm:inline">Mentor</span>
+        <span className="hidden sm:inline font-mono text-[11px] text-slate-400 border-l border-slate-700 pl-2">
           ⌘J
         </span>
       </button>
@@ -628,28 +629,28 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
   return (
     <aside
       aria-label="JARVIS Interactive Command Mentor"
-      className="fixed top-14 right-0 bottom-0 z-50 w-full sm:w-[440px] bg-[#121824] border-l border-slate-800 flex flex-col shadow-2xl shadow-black/60"
+      className="fixed inset-0 sm:top-14 sm:left-auto sm:right-0 sm:bottom-0 z-50 w-full sm:w-[440px] bg-[#121824] sm:border-l border-slate-800 flex flex-col shadow-2xl shadow-black/60"
     >
       {/* Header */}
-      <div className="px-4 py-3.5 border-b border-slate-800/90 flex items-center justify-between gap-2 bg-[#0F1520]">
-        <div className="min-w-0">
+      <div className="px-3.5 sm:px-4 py-3 border-b border-slate-800/90 flex items-center justify-between gap-2 bg-[#0F1520]">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <Bot className="w-4 h-4 text-sky-400 shrink-0" />
             <h2 className="font-display text-sm font-semibold text-slate-50 truncate">
-              JARVIS Command Mentor
+              JARVIS Mentor
             </h2>
           </div>
           <div className="text-[11px] font-mono text-slate-400 truncate mt-0.5">
-            Screen: {screenLabel}
+            {screenLabel}
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
           <button
             type="button"
             onClick={() => void handleToggleLiveCall()}
             title={isLiveCallActive ? 'End two-way voice call' : 'Start live two-way voice call'}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
+            className={`inline-flex items-center justify-center gap-1.5 px-2.5 min-h-[38px] rounded-lg border text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
               isLiveCallActive
                 ? 'bg-red-500/20 hover:bg-red-500/30 border-red-500/50 text-red-200'
                 : 'bg-emerald-500/15 hover:bg-emerald-500/25 border-emerald-500/40 text-emerald-200'
@@ -658,12 +659,14 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
             {isLiveCallActive ? (
               <>
                 <PhoneOff className="w-3.5 h-3.5" />
-                <span>End Voice</span>
+                <span className="hidden sm:inline">End Voice</span>
+                <span className="sm:hidden">End</span>
               </>
             ) : (
               <>
                 <Phone className="w-3.5 h-3.5" />
-                <span>Voice Call</span>
+                <span className="hidden sm:inline">Voice Call</span>
+                <span className="sm:hidden">Voice</span>
               </>
             )}
           </button>
@@ -673,10 +676,11 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
             onClick={onAnalyzeNow}
             disabled={loading}
             title="Analyze current project & quests and switch screen"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 text-sky-200 text-xs font-medium disabled:opacity-50 transition-colors cursor-pointer whitespace-nowrap"
+            aria-label="Analyze current project and quests"
+            className="inline-flex items-center justify-center gap-1.5 px-2.5 min-h-[38px] rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 text-sky-200 text-xs font-medium disabled:opacity-50 transition-colors cursor-pointer whitespace-nowrap"
           >
             <Compass className="w-3.5 h-3.5" />
-            <span>Analyze</span>
+            <span className="hidden sm:inline">Analyze</span>
           </button>
 
           {supportsTts && !isLiveCallActive && (
@@ -685,7 +689,7 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
               onClick={handleToggleVoiceOutput}
               title={voiceEnabled ? 'Mute voice readout' : 'Enable voice readout'}
               aria-label={voiceEnabled ? 'Mute voice readout' : 'Enable voice readout'}
-              className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
+              className={`min-w-[38px] min-h-[38px] flex items-center justify-center rounded-lg border transition-colors cursor-pointer ${
                 voiceEnabled
                   ? 'bg-sky-500/15 border-sky-500/40 text-sky-300'
                   : 'bg-[#0B0F17] border-slate-800 text-slate-400 hover:text-slate-200'
@@ -702,7 +706,7 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
               disabled={loading}
               title="Clear JARVIS thread"
               aria-label="Clear JARVIS thread"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-red-300 hover:bg-slate-800 disabled:opacity-50 transition-colors cursor-pointer"
+              className="min-w-[38px] min-h-[38px] flex items-center justify-center rounded-lg text-slate-400 hover:text-red-300 hover:bg-slate-800 disabled:opacity-50 transition-colors cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -712,7 +716,7 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
             type="button"
             onClick={() => onToggleOpen(false)}
             aria-label="Close JARVIS console"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer"
+            className="min-w-[38px] min-h-[38px] flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -977,7 +981,7 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
       {/* Input Footer */}
       <form
         onSubmit={handleSubmit}
-        className="p-3.5 border-t border-slate-800/90 bg-[#0F1520] space-y-2"
+        className="p-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] border-t border-slate-800/90 bg-[#0F1520] space-y-2"
       >
         <div className="flex items-end gap-2">
           <textarea
@@ -987,7 +991,7 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask a technical doubt, command a screen switch, or ask what to do next..."
-            className="flex-1 resize-none px-3 py-2 rounded-lg bg-[#0B0F17] border border-slate-800 focus:border-sky-500 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
+            className="flex-1 min-w-0 resize-none px-3 py-2 rounded-lg bg-[#0B0F17] border border-slate-800 focus:border-sky-500 text-sm sm:text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
           />
 
           {speechCtor && (
@@ -996,7 +1000,7 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
               onClick={handleToggleMic}
               title={listening ? 'Stop voice input' : 'Speak command or doubt'}
               aria-label={listening ? 'Stop voice input' : 'Speak command or doubt'}
-              className={`p-2.5 rounded-lg border transition-colors cursor-pointer shrink-0 ${
+              className={`min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border transition-colors cursor-pointer shrink-0 ${
                 listening
                   ? 'bg-red-500/20 border-red-500/50 text-red-300'
                   : 'bg-[#0B0F17] border-slate-800 text-slate-300 hover:text-white'
@@ -1010,7 +1014,7 @@ export const JarvisConsole: React.FC<JarvisConsoleProps> = ({
             type="submit"
             disabled={loading || !input.trim()}
             aria-label="Send message to JARVIS"
-            className="p-2.5 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-slate-950 transition-colors cursor-pointer shrink-0"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-slate-950 transition-colors cursor-pointer shrink-0"
           >
             <Send className="w-4 h-4" />
           </button>

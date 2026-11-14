@@ -22,22 +22,22 @@ export const AuthGate: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] text-[#F1F5F9] flex flex-col justify-between px-6 py-8 md:px-12">
-      <header className="max-w-6xl w-full mx-auto flex items-center justify-between gap-8 pb-6 border-b border-slate-800/80">
+    <div className="min-h-screen bg-[#0B0F17] text-[#F1F5F9] flex flex-col justify-between px-4 py-6 sm:px-6 sm:py-8 md:px-12">
+      <header className="max-w-6xl w-full mx-auto flex flex-wrap items-center justify-between gap-2 sm:gap-8 pb-4 sm:pb-6 border-b border-slate-800/80">
         <span className="font-display text-lg font-bold tracking-tight text-slate-100 whitespace-nowrap shrink-0">
           ApexStack
         </span>
-        <span className="text-xs font-mono text-slate-400 whitespace-nowrap shrink-0">
+        <span className="text-[11px] sm:text-xs font-mono text-slate-400 whitespace-nowrap shrink-0">
           Angular · FastAPI · DevOps · AWS · GCP
         </span>
       </header>
 
-      <main className="max-w-6xl w-full mx-auto py-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-7 space-y-6">
+      <main className="max-w-6xl w-full mx-auto py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
+        <div className="lg:col-span-7 space-y-5 sm:space-y-6">
           <p className="text-xs font-mono tracking-wider text-sky-400">
             Associate Cloud Engineer to Top 1% Mastery
           </p>
-          <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight text-slate-50 leading-[1.1]">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-50 leading-[1.12]">
             Turn daily project execution into compound mastery across all five stacks.
           </h1>
           <p className="text-base text-slate-300 leading-relaxed max-w-2xl">
@@ -103,7 +103,7 @@ export const AuthGate: React.FC = () => {
         </div>
       </main>
 
-      <footer className="max-w-6xl w-full mx-auto pt-6 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+      <footer className="max-w-6xl w-full mx-auto pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 text-center sm:text-left">
         <span>ApexStack Engineering Console</span>
         <span>Cloud Firestore Sync Enabled</span>
       </footer>

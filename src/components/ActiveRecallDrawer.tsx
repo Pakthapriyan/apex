@@ -100,19 +100,19 @@ export const ActiveRecallDrawer: React.FC<ActiveRecallDrawerProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-40 flex justify-end ${
+      className={`fixed inset-0 z-50 flex justify-end ${
         jarvisOpen ? 'lg:justify-start lg:pr-[440px]' : ''
       }`}
     >
       <div className="fixed inset-0 bg-black/70" onClick={onClose} />
       <aside
         aria-label="SM-2 Active Recall Drill"
-        className={`relative z-10 w-full max-w-xl bg-[#121824] border-slate-800 h-full overflow-y-auto flex flex-col ${
-          jarvisOpen ? 'border-l lg:border-l-0 lg:border-r' : 'border-l'
+        className={`relative z-10 w-full sm:max-w-xl bg-[#121824] border-slate-800 h-full overflow-y-auto flex flex-col pb-[env(safe-area-inset-bottom,0px)] ${
+          jarvisOpen ? 'sm:border-l lg:border-l-0 lg:border-r' : 'sm:border-l'
         }`}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-800/90 bg-[#0F1520] flex items-center justify-between gap-3">
+        <div className="px-4 sm:px-6 py-4 border-b border-slate-800/90 bg-[#0F1520] flex items-center justify-between gap-3">
           <div className="space-y-0.5 min-w-0">
             <div className="flex items-center gap-2 text-xs font-mono text-sky-400">
               <Brain className="w-4 h-4 shrink-0" />
@@ -127,13 +127,13 @@ export const ActiveRecallDrawer: React.FC<ActiveRecallDrawerProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close active recall drawer"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer shrink-0"
+            className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="p-6 space-y-5 flex-1">
+        <div className="p-4 sm:p-6 space-y-5 flex-1">
           {error && (
             <div className="p-3 rounded-lg bg-red-950/40 border border-red-800/60 text-xs text-red-200">
               {error}
@@ -300,7 +300,7 @@ export const ActiveRecallDrawer: React.FC<ActiveRecallDrawerProps> = ({
                           type="button"
                           disabled={grading}
                           onClick={() => void handleGrade(1)}
-                          className="px-3 py-2 rounded-lg border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-xs font-semibold text-red-200 cursor-pointer whitespace-nowrap"
+                          className="px-3 min-h-[44px] sm:min-h-0 py-2 rounded-lg border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-xs font-semibold text-red-200 cursor-pointer whitespace-nowrap"
                         >
                           Again (1d)
                         </button>
@@ -308,7 +308,7 @@ export const ActiveRecallDrawer: React.FC<ActiveRecallDrawerProps> = ({
                           type="button"
                           disabled={grading}
                           onClick={() => void handleGrade(3)}
-                          className="px-3 py-2 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-semibold text-amber-200 cursor-pointer whitespace-nowrap"
+                          className="px-3 min-h-[44px] sm:min-h-0 py-2 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-semibold text-amber-200 cursor-pointer whitespace-nowrap"
                         >
                           Hard
                         </button>
@@ -316,7 +316,7 @@ export const ActiveRecallDrawer: React.FC<ActiveRecallDrawerProps> = ({
                           type="button"
                           disabled={grading}
                           onClick={() => void handleGrade(4)}
-                          className="px-3 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-semibold text-sky-200 cursor-pointer whitespace-nowrap"
+                          className="px-3 min-h-[44px] sm:min-h-0 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-semibold text-sky-200 cursor-pointer whitespace-nowrap"
                         >
                           Good
                         </button>
@@ -324,7 +324,7 @@ export const ActiveRecallDrawer: React.FC<ActiveRecallDrawerProps> = ({
                           type="button"
                           disabled={grading}
                           onClick={() => void handleGrade(5)}
-                          className="px-3 py-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-semibold text-emerald-200 cursor-pointer whitespace-nowrap"
+                          className="px-3 min-h-[44px] sm:min-h-0 py-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-semibold text-emerald-200 cursor-pointer whitespace-nowrap"
                         >
                           Easy
                         </button>

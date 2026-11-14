@@ -1088,16 +1088,16 @@ export default function App() {
         jarvisOpen ? 'lg:pr-[440px]' : ''
       }`}
     >
-      {/* Clean 3-Zone Top Bar */}
-      <header className="sticky top-0 z-30 bg-[#0B0F17]/95 backdrop-blur-sm border-b border-slate-800/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4 sm:gap-8">
+      {/* Clean 3-Zone Top Bar (Desktop) & Compact Mobile Header */}
+      <header className="md:sticky md:top-0 z-30 bg-[#0B0F17]/95 backdrop-blur-sm border-b border-slate-800/80">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-12 md:h-14 flex items-center justify-between gap-4 sm:gap-8">
           {/* Zone 1: Wordmark */}
           <span className="font-display text-base sm:text-lg font-bold tracking-tight text-slate-50 whitespace-nowrap shrink-0">
             ApexStack
           </span>
 
-          {/* Zone 2: 3 Primary Pages */}
-          <nav className="flex items-center gap-4 sm:gap-6" aria-label="Primary navigation">
+          {/* Zone 2: Desktop Primary Pages */}
+          <nav className="hidden md:flex items-center gap-6" aria-label="Primary navigation">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = activePage === item.id;
@@ -1106,13 +1106,13 @@ export default function App() {
                   key={item.id}
                   type="button"
                   onClick={() => handleNavigate(item.id)}
-                  className={`inline-flex items-center gap-1.5 py-1 text-xs sm:text-sm transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
+                  className={`inline-flex items-center gap-1.5 py-1 text-sm transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
                     isActive
                       ? 'border-sky-400 text-slate-50 font-semibold'
                       : 'border-transparent text-slate-400 hover:text-slate-100'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5 shrink-0 hidden sm:inline" />
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
                   <span>{item.label}</span>
                   {item.id === 'quests' && pendingTodayQuestsCount > 0 && (
                     <span className="font-mono text-[11px] text-sky-400 tabular-nums">
@@ -1125,13 +1125,13 @@ export default function App() {
           </nav>
 
           {/* Zone 3: 1 Primary Action */}
-          <div className="hidden sm:flex items-center shrink-0">
+          <div className="flex items-center shrink-0">
             <button
               type="button"
               onClick={() =>
                 handleNavigate(activePage === 'upload' ? 'quests' : 'upload')
               }
-              className="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="px-3.5 py-1.5 min-h-[36px] md:min-h-0 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               {activePage === 'upload' ? 'View Quests' : 'Upload Project'}
             </button>
@@ -1139,7 +1139,42 @@ export default function App() {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8 pb-20">
+      {/* Mobile Fixed Bottom Thumb-Zone Navigation */}
+      <nav
+        aria-label="Mobile navigation"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F17]/95 backdrop-blur-md border-t border-slate-800/90 pb-safe"
+      >
+        <div className="grid grid-cols-4 h-14">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const isActive = activePage === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleNavigate(item.id)}
+                className={`relative flex flex-col items-center justify-center gap-0.5 min-h-[44px] transition-colors cursor-pointer ${
+                  isActive ? 'text-sky-400' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <div className="relative">
+                  <Icon className="w-5 h-5" />
+                  {item.id === 'quests' && pendingTodayQuestsCount > 0 && (
+                    <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 px-1 rounded-full bg-sky-500 text-slate-950 font-mono text-[10px] font-bold flex items-center justify-center tabular-nums">
+                      {pendingTodayQuestsCount}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[11px] font-medium tracking-tight whitespace-nowrap">
+                  {item.id === 'upload' ? 'Upload' : item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      <main className="flex-1 w-full max-w-6xl mx-auto px-3.5 sm:px-6 py-4 sm:py-6 md:py-8 pb-28 md:pb-20">
         {activePage === 'quests' && (
           <QuestsPage
             profile={profile}

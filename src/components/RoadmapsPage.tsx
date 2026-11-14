@@ -19,6 +19,7 @@ import {
   Map,
   Sparkles,
   Target,
+  X,
 } from 'lucide-react';
 import { computeDomainLevelStats } from '../data/milestones';
 import { DOMAINS } from '../data/seedCurriculum';
@@ -138,7 +139,9 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
 }) => {
   const todayKey = getTodayIsoDate();
   const todaySlot = profile.rotationMap[getTodayDayKey()];
-  const inspectorRef = useRef<HTMLDivElement | null>(null);
+  const inspectorRef = useRef<HTMLElement | null>(null);
+  const inspectorBodyRef = useRef<HTMLDivElement | null>(null);
+  const mobileInspectorBodyRef = useRef<HTMLDivElement | null>(null);
   const graphRef = useRef<HTMLElement | null>(null);
 
   const activeProject = useMemo(
@@ -183,6 +186,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
   const [sequenceMode, setSequenceMode] = useState<'stack' | 'tier'>('stack');
   const [stepFilter, setStepFilter] = useState<'all' | 'pending' | 'done'>('all');
   const [selectedStepId, setSelectedStepId] = useState<string | null>(null);
+  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
   const [focusGoalInput, setFocusGoalInput] = useState('');
   const [togglingStepId, setTogglingStepId] = useState<string | null>(null);
   const [showJobForm, setShowJobForm] = useState(false);
@@ -408,6 +412,30 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
     nextFocusStepId,
   ]);
 
+  useEffect(() => {
+    if (inspectorBodyRef.current) {
+      inspectorBodyRef.current.scrollTop = 0;
+    }
+    if (mobileInspectorBodyRef.current) {
+      mobileInspectorBodyRef.current.scrollTop = 0;
+    }
+  }, [selectedStepId, viewMode]);
+
+  useEffect(() => {
+    setMobileInspectorOpen(false);
+  }, [selectedDomain, viewMode]);
+
+  useEffect(() => {
+    if (!mobileInspectorOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileInspectorOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [mobileInspectorOpen]);
+
   const selectedEntry = useMemo(() => {
     if (flattenedSteps.length === 0) return null;
     return (
@@ -451,8 +479,8 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
 
   const handleSelectStepNode = (uidKey: string) => {
     setSelectedStepId(uidKey);
-    if (typeof window !== 'undefined' && window.innerWidth < 1024 && inspectorRef.current) {
-      inspectorRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setMobileInspectorOpen(true);
     }
   };
 
@@ -694,17 +722,17 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
         <button
           type="button"
           onClick={() => onSelectDomain('All')}
-          className={`w-full text-left p-4 sm:px-5 rounded-xl border transition-colors cursor-pointer flex flex-wrap items-center justify-between gap-4 ${
+          className={`w-full text-left p-4 sm:px-5 rounded-xl border transition-colors cursor-pointer flex flex-col lg:flex-row lg:items-center justify-between gap-3 lg:gap-4 ${
             isAllMode
               ? 'bg-[#141D2D] border-sky-400/75 shadow-sm shadow-sky-500/10'
               : 'bg-[#121824] border-slate-800/80 hover:border-slate-700'
           }`}
         >
           <div className="space-y-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-sky-400">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] font-mono text-sky-400">
               <Layers className="w-3.5 h-3.5 shrink-0" />
               <span>UNIFIED MASTER SEQUENCE</span>
-              <span className="text-slate-600">·</span>
+              <span className="text-slate-600 hidden sm:inline">·</span>
               <span className="text-slate-300">
                 01 Angular → 02 FastAPI → 03 DevOps → 04 AWS → 05 GCP
               </span>
@@ -714,23 +742,23 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs font-mono tabular-nums shrink-0">
+          <div className="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 sm:gap-4 text-[11px] sm:text-xs font-mono tabular-nums shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-800/80">
             <span className={isAllMode ? 'text-sky-300 font-semibold' : 'text-slate-300'}>
               Avg Lv. {unifiedMasterStats.avgLevel}/10
             </span>
-            <span className="text-slate-700">·</span>
-            <span className="text-emerald-300">
-              {unifiedMasterStats.designedCount}/5 JARVIS Roadmaps
+            <span className="text-slate-700 hidden sm:inline">·</span>
+            <span className="text-emerald-300 text-center sm:text-left">
+              {unifiedMasterStats.designedCount}/5 Roadmaps
             </span>
-            <span className="text-slate-700">·</span>
-            <span className="text-slate-300">
-              {unifiedMasterStats.avgReadiness}% Readiness
+            <span className="text-slate-700 hidden sm:inline">·</span>
+            <span className="text-slate-300 text-right sm:text-left">
+              {unifiedMasterStats.avgReadiness}% Ready
             </span>
           </div>
         </button>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        {domainStatsList.map((stat) => {
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
+        {domainStatsList.map((stat, idx) => {
           const isSelected = stat.domain === selectedDomain;
           const hasRoadmap = Boolean(roadmaps[stat.domain]);
           return (
@@ -738,7 +766,9 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
               key={stat.domain}
               type="button"
               onClick={() => onSelectDomain(stat.domain)}
-              className={`text-left p-4 rounded-xl border transition-colors cursor-pointer space-y-2.5 ${
+              className={`text-left p-3 sm:p-4 rounded-xl border transition-colors cursor-pointer space-y-2 ${
+                idx === domainStatsList.length - 1 ? 'col-span-2 sm:col-span-1' : ''
+              } ${
                 isSelected
                   ? 'bg-[#141D2D] border-sky-400/70 shadow-sm shadow-sky-500/10'
                   : 'bg-[#121824] border-slate-800/80 hover:border-slate-700'
@@ -774,12 +804,12 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                 />
               </div>
 
-              <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 tabular-nums">
+              <div className="flex items-center justify-between gap-1 text-[11px] font-mono text-slate-500 tabular-nums">
                 <span>Mastery {stat.avgMastery}%</span>
-                <span>
+                <span className="truncate">
                   {hasRoadmap
-                    ? `${stat.roadmapStepsDone}/${stat.roadmapStepsTotal} steps`
-                    : 'Not built'}
+                    ? `${stat.roadmapStepsDone}/${stat.roadmapStepsTotal}`
+                    : 'Seed'}
                 </span>
               </div>
             </button>
@@ -790,7 +820,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
 
       {/* Active Project Override Alert (if active) */}
       {activeProject && (
-        <section className="bg-[#121824] border border-amber-500/35 rounded-xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+        <section className="bg-[#121824] border border-amber-500/35 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1 max-w-2xl">
             <div className="text-xs font-mono text-amber-400">
               ACTIVE PROJECT OVERRIDE · {activeProject.primaryDomain}
@@ -806,27 +836,27 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
           <button
             type="button"
             onClick={handleOpenJobForm}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 min-h-[42px] sm:min-h-0 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
           >
             <Flag className="w-3.5 h-3.5" />
-            <span>Mark Job Task Done &amp; Resume Path</span>
+            <span>Mark Job Done &amp; Resume</span>
           </button>
         </section>
       )}
 
       {/* Selected Domain (or Unified Sequence) Level & JARVIS Architecture Hero */}
       <section className="bg-[#121824] border border-sky-500/35 rounded-xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-800/80 flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-1.5 max-w-2xl">
+        <div className="p-4 sm:px-6 sm:py-5 border-b border-slate-800/80 flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+          <div className="space-y-1.5 max-w-2xl min-w-0">
             <div className="flex items-center gap-2 text-xs font-mono text-sky-400">
               <Map className="w-4 h-4 shrink-0" />
-              <span>
+              <span className="truncate">
                 {isAllMode
-                  ? 'JARVIS UNIFIED SEQUENCE · ANGULAR → FASTAPI → DEVOPS → AWS → GCP'
+                  ? 'JARVIS UNIFIED SEQUENCE · 5 STACKS'
                   : `JARVIS TOP 1% ROADMAP · ${selectedDomain.toUpperCase()}`}
               </span>
             </div>
-            <h2 className="font-display text-xl font-semibold text-slate-50">
+            <h2 className="font-display text-lg sm:text-xl font-semibold text-slate-50">
               {isAllMode
                 ? 'Combined Top 1% Full-Stack & Multi-Cloud Sequence'
                 : currentRoadmap?.title || `${selectedDomain} Top 1% Mastery Path`}
@@ -839,7 +869,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 w-full lg:w-auto shrink-0">
             {isAllMode ? (
               <>
                 {missingRoadmapDomains.length > 0 && (
@@ -852,7 +882,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                         focusGoal: focusGoalInput.trim() || undefined,
                       })
                     }
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
                   >
                     {isDesigningAll ? (
                       <>
@@ -881,7 +911,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                       focusGoal: focusGoalInput.trim() || undefined,
                     })
                   }
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0 disabled:opacity-50 ${
+                  className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0 disabled:opacity-50 ${
                     missingRoadmapDomains.length === 0
                       ? 'bg-sky-500 hover:bg-sky-400 text-slate-950'
                       : 'border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-slate-200'
@@ -916,7 +946,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                   onClick={() =>
                     void onDesignRoadmap(selectedDomain, focusGoalInput.trim() || undefined)
                   }
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
                 >
                   {isDesigningCurrent ? (
                     <>
@@ -944,7 +974,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                       focusGoal: focusGoalInput.trim() || undefined,
                     })
                   }
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 disabled:opacity-50 text-xs font-medium text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 disabled:opacity-50 text-xs font-medium text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
                 >
                   {isDesigningAll ? (
                     <>
@@ -968,10 +998,10 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
             <button
               type="button"
               onClick={handleOpenJobForm}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-semibold text-emerald-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-semibold text-emerald-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               <Briefcase className="w-3.5 h-3.5" />
-              <span>Mark Prior Job Done &amp; Resume Path</span>
+              <span>Mark Job Done &amp; Resume</span>
             </button>
 
             {onAskJarvis && (
@@ -984,7 +1014,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                       : `Review my ${selectedDomain} roadmap (currently Lv. ${selectedStats.level}/10, ${selectedStats.avgMastery}% mastery) and coach me on the highest-leverage next step.`
                   )
                 }
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-medium text-sky-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-medium text-sky-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
               >
                 <Bot className="w-3.5 h-3.5" />
                 <span>Coach Next Step</span>
@@ -995,10 +1025,10 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
 
         {/* 4 Domain Level & Progression Telemetry Cells */}
         {isAllMode ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-slate-800/80">
-            <div className="p-5 space-y-1">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-slate-800/80">
+            <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
               <div className="text-xs text-slate-400">Unified Engineer Level</div>
-              <div className="font-mono text-xl font-semibold text-sky-300 tabular-nums">
+              <div className="font-mono text-lg sm:text-xl font-semibold text-sky-300 tabular-nums">
                 Avg Lv. {unifiedMasterStats.avgLevel} / 10
               </div>
               <div className="text-xs font-mono text-slate-400 tabular-nums">
@@ -1006,8 +1036,8 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
               </div>
             </div>
 
-            <div className="p-5 space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-slate-400">
+            <div className="bg-[#121824] p-4 sm:p-5 space-y-1.5">
+              <div className="flex items-center justify-between gap-1 text-xs text-slate-400">
                 <span>Combined Readiness</span>
                 <span className="font-mono tabular-nums text-slate-200">
                   {unifiedMasterStats.avgReadiness}%
@@ -1020,14 +1050,14 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                 />
               </div>
               <div className="text-[11px] font-mono text-slate-500 tabular-nums">
-                {unifiedMasterStats.designedCount}/5 JARVIS blueprints ·{' '}
+                {unifiedMasterStats.designedCount}/5 blueprints ·{' '}
                 {unifiedMasterStats.totalDomainXp} XP
               </div>
             </div>
 
-            <div className="p-5 space-y-1">
+            <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
               <div className="text-xs text-slate-400">Sequence Progress</div>
-              <div className="font-mono text-xl font-semibold text-slate-50 tabular-nums">
+              <div className="font-mono text-lg sm:text-xl font-semibold text-slate-50 tabular-nums">
                 {doneStepsCount} / {flattenedSteps.length}
               </div>
               <div className="text-xs font-mono text-emerald-400 tabular-nums">
@@ -1035,9 +1065,9 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
               </div>
             </div>
 
-            <div className="p-5 space-y-1">
+            <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
               <div className="text-xs text-slate-400">Top 1% Nodes &amp; Jobs</div>
-              <div className="font-mono text-xl font-semibold text-slate-50 tabular-nums">
+              <div className="font-mono text-lg sm:text-xl font-semibold text-slate-50 tabular-nums">
                 {unifiedMasterStats.top1NodesReady}/{unifiedMasterStats.top1NodesTotal} Nodes
               </div>
               <div className="text-xs font-mono text-slate-400 tabular-nums">
@@ -1047,19 +1077,19 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-slate-800/80">
-            <div className="p-5 space-y-1">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-slate-800/80">
+            <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
               <div className="text-xs text-slate-400">{selectedDomain} Level</div>
-              <div className="font-mono text-xl font-semibold text-sky-300 tabular-nums">
+              <div className="font-mono text-lg sm:text-xl font-semibold text-sky-300 tabular-nums">
                 Lv. {selectedStats.level} / {selectedStats.maxLevel}
               </div>
-              <div className="text-xs font-mono text-slate-400">
+              <div className="text-xs font-mono text-slate-400 truncate">
                 {selectedStats.rankTitle}
               </div>
             </div>
 
-            <div className="p-5 space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-slate-400">
+            <div className="bg-[#121824] p-4 sm:p-5 space-y-1.5">
+              <div className="flex items-center justify-between gap-1 text-xs text-slate-400">
                 <span>Readiness &amp; Next Level</span>
                 <span className="font-mono tabular-nums text-slate-200">
                   {selectedStats.readinessScore}%
@@ -1078,9 +1108,9 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
               </div>
             </div>
 
-            <div className="p-5 space-y-1">
+            <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
               <div className="text-xs text-slate-400">Roadmap Progress</div>
-              <div className="font-mono text-xl font-semibold text-slate-50 tabular-nums">
+              <div className="font-mono text-lg sm:text-xl font-semibold text-slate-50 tabular-nums">
                 {selectedStats.roadmapStepsDone} / {selectedStats.roadmapStepsTotal || 12}
               </div>
               <div className="text-xs font-mono text-emerald-400 tabular-nums">
@@ -1090,9 +1120,9 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
               </div>
             </div>
 
-            <div className="p-5 space-y-1">
+            <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
               <div className="text-xs text-slate-400">Top 1% Nodes &amp; Jobs</div>
-              <div className="font-mono text-xl font-semibold text-slate-50 tabular-nums">
+              <div className="font-mono text-lg sm:text-xl font-semibold text-slate-50 tabular-nums">
                 {selectedStats.top1NodesReady}/{selectedStats.top1NodesTotal} Nodes
               </div>
               <div className="text-xs font-mono text-slate-400 tabular-nums">
@@ -1258,7 +1288,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
       )}
 
       {/* Custom Focus Goal Re-Architect Bar */}
-      <section className="bg-[#121824] border border-slate-800/80 rounded-xl p-4 flex flex-wrap items-center gap-3">
+      <section className="bg-[#121824] border border-slate-800/80 rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
         <Compass className="w-4 h-4 text-sky-400 shrink-0 hidden sm:inline" />
         <input
           type="text"
@@ -1267,10 +1297,10 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
           onChange={(e) => setFocusGoalInput(e.target.value)}
           placeholder={
             isAllMode
-              ? 'Optional JARVIS focus directive across all 5 domains (e.g., High-scale SaaS with zero-downtime GitOps)'
-              : `Optional JARVIS focus directive for ${selectedDomain} (e.g., High-scale Kubernetes observability & multi-region failover)`
+              ? 'Optional JARVIS focus directive across all 5 domains...'
+              : `Optional JARVIS focus directive for ${selectedDomain}...`
           }
-          className="flex-1 min-w-[240px] px-3.5 py-2 rounded-lg bg-[#0B0F17] border border-slate-800 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
+          className="w-full sm:flex-1 min-w-0 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg bg-[#0B0F17] border border-slate-800 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
         />
         <button
           type="button"
@@ -1283,7 +1313,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
               void onDesignRoadmap(selectedDomain, goal);
             }
           }}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 disabled:opacity-50 text-xs font-semibold text-sky-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 disabled:opacity-50 text-xs font-semibold text-sky-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           {isDesigningCurrent ? (
             <>
@@ -1367,13 +1397,13 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
       ) : (
         <div className="space-y-4">
           {/* View Mode Bar + Sequence Strategy (Unified Mode) + Step Status Filter + Legend */}
-          <div className="bg-[#121824] border border-slate-800/80 rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#0B0F17] border border-slate-800">
+          <div className="bg-[#121824] border border-slate-800/80 rounded-xl p-3 sm:px-4 sm:py-3 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2 min-w-0">
+              <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#0B0F17] border border-slate-800 overflow-x-auto max-w-full">
                 <button
                   type="button"
                   onClick={() => setViewMode('graph')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                  className={`inline-flex items-center gap-1.5 px-3 min-h-[36px] sm:min-h-0 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                     viewMode === 'graph'
                       ? 'bg-sky-500 text-slate-950 font-semibold'
                       : 'text-slate-300 hover:text-slate-100'
@@ -1385,7 +1415,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setViewMode('list')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                  className={`inline-flex items-center gap-1.5 px-3 min-h-[36px] sm:min-h-0 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                     viewMode === 'list'
                       ? 'bg-sky-500 text-slate-950 font-semibold'
                       : 'text-slate-300 hover:text-slate-100'
@@ -1398,14 +1428,14 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
 
               {isAllMode && (
                 <div
-                  className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#0B0F17] border border-slate-800"
+                  className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#0B0F17] border border-slate-800 overflow-x-auto max-w-full"
                   role="group"
                   aria-label="Unified roadmap sequence order"
                 >
                   <button
                     type="button"
                     onClick={() => setSequenceMode('stack')}
-                    className={`px-2.5 py-1.5 rounded-md text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                    className={`px-2.5 min-h-[36px] sm:min-h-0 py-1.5 rounded-md text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                       sequenceMode === 'stack'
                         ? 'bg-slate-800 text-sky-300 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
@@ -1416,7 +1446,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setSequenceMode('tier')}
-                    className={`px-2.5 py-1.5 rounded-md text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                    className={`px-2.5 min-h-[36px] sm:min-h-0 py-1.5 rounded-md text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                       sequenceMode === 'tier'
                         ? 'bg-slate-800 text-sky-300 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
@@ -1427,7 +1457,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                 </div>
               )}
 
-              <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#0B0F17] border border-slate-800">
+              <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#0B0F17] border border-slate-800 overflow-x-auto max-w-full">
                 {(
                   [
                     { id: 'all', label: `All (${flattenedSteps.length})` },
@@ -1439,7 +1469,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                     key={opt.id}
                     type="button"
                     onClick={() => setStepFilter(opt.id)}
-                    className={`px-2.5 py-1.5 rounded-md text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                    className={`px-2.5 min-h-[36px] sm:min-h-0 py-1.5 rounded-md text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                       stepFilter === opt.id
                         ? 'bg-slate-800 text-sky-300 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
@@ -1451,7 +1481,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-slate-400">
+            <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-slate-400 shrink-0">
               <span className="inline-flex items-center gap-1.5 text-emerald-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
                 Completed
@@ -1672,7 +1702,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                                 <button
                                   type="button"
                                   onClick={() => handleSelectStepNode(uidKey)}
-                                  className="text-[11px] font-mono text-sky-400 hover:text-sky-300 cursor-pointer whitespace-nowrap"
+                                  className="min-h-[36px] inline-flex items-center text-[11px] font-mono text-sky-400 hover:text-sky-300 cursor-pointer whitespace-nowrap"
                                 >
                                   {isSelected ? 'Inspecting guide →' : 'Read full guide →'}
                                 </button>
@@ -1680,7 +1710,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                                   type="button"
                                   disabled={isBusy}
                                   onClick={() => void handleToggleStep(uidKey)}
-                                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                                  className={`inline-flex items-center gap-1 px-2.5 min-h-[36px] sm:min-h-0 py-1 rounded text-[11px] font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                                     step.completed
                                       ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/25'
                                       : 'bg-[#0B0F17] border-slate-700 text-slate-200 hover:border-sky-400 hover:text-sky-200'
@@ -1799,16 +1829,16 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                 )}
               </section>
 
-              {/* Right: Sticky Detailed Step Inspector */}
+              {/* Right: Sticky Scrollable Detailed Step Inspector (Desktop) & Inline Fallback */}
               <aside
                 ref={inspectorRef}
                 aria-label="Step detail guide"
-                className="lg:col-span-5 lg:sticky lg:top-20 bg-[#121824] border border-sky-500/35 rounded-xl overflow-hidden"
+                className="lg:col-span-5 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:flex lg:flex-col bg-[#121824] border border-sky-500/35 rounded-xl overflow-hidden scroll-mt-4"
               >
                 {selectedEntry && selectedDetail ? (
-                  <div className="flex flex-col">
+                  <div className="flex flex-col flex-1 min-h-0">
                     {/* Inspector Header */}
-                    <div className="px-5 py-4 border-b border-slate-800/80 bg-[#0F1520] space-y-2">
+                    <div className="shrink-0 px-4 sm:px-5 py-4 border-b border-slate-800/80 bg-[#0F1520] space-y-2">
                       <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono tabular-nums">
                         <span className="text-sky-400 font-semibold">
                           {isAllMode ? 'PHASE' : 'STAGE'} {selectedEntry.stage.stageNumber} ·{' '}
@@ -1835,7 +1865,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                         </div>
                       </div>
 
-                      <h3 className="font-display text-lg font-semibold text-slate-50 leading-snug">
+                      <h3 className="font-display text-base sm:text-lg font-semibold text-slate-50 leading-snug">
                         {selectedEntry.step.title}
                       </h3>
 
@@ -1887,8 +1917,11 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                       )}
                     </div>
 
-                    {/* Inspector Body */}
-                    <div className="p-5 space-y-5">
+                    {/* Scrollable Inspector Body */}
+                    <div
+                      ref={inspectorBodyRef}
+                      className="p-4 sm:p-5 space-y-5 lg:flex-1 lg:min-h-0 lg:overflow-y-auto overscroll-contain"
+                    >
                       {selectedEntry.step.completedJobTaskTag && (
                         <div className="p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/40 text-xs text-emerald-200 font-mono">
                           Credited via Job Task: {selectedEntry.step.completedJobTaskTag}
@@ -1910,7 +1943,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
 
                       {/* Architecture & Implementation Deep Dive */}
                       <div className="space-y-2 pt-3 border-t border-slate-800/80">
-                        <div className="flex items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
                           <span className="text-[11px] font-mono uppercase tracking-wider text-slate-300 font-semibold">
                             Architecture &amp; Execution Guide
                           </span>
@@ -1985,14 +2018,16 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                           </p>
                         </div>
                       )}
+                    </div>
 
-                      {/* Step Action Controls */}
-                      <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
+                    {/* Pinned Action & Navigation Footer */}
+                    <div className="shrink-0 px-4 sm:px-5 py-3.5 border-t border-slate-800/80 bg-[#0F1520] space-y-2.5">
+                      <div className="flex flex-wrap items-center gap-2">
                         <button
                           type="button"
                           disabled={togglingStepId === selectedEntry.uidKey}
                           onClick={() => void handleToggleStep(selectedEntry.uidKey)}
-                          className={`flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                          className={`flex-1 inline-flex items-center justify-center gap-1.5 px-4 min-h-[44px] sm:min-h-0 py-2.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                             selectedEntry.step.completed
                               ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/25'
                               : 'bg-sky-500 hover:bg-sky-400 border-sky-400 text-slate-950'
@@ -2024,7 +2059,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                                 `Coach me in detail on ${selectedEntry.sourceDomain} roadmap step ${selectedEntry.stepCode} "${selectedEntry.step.title}" (linked skill: ${selectedEntry.step.skillTitle}). Explain internals, pitfalls, and walk me through verifying the lab objective.`
                               )
                             }
-                            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-sky-300 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                            className="inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[44px] sm:min-h-0 py-2.5 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-sky-300 transition-colors cursor-pointer whitespace-nowrap shrink-0"
                           >
                             <Bot className="w-3.5 h-3.5" />
                             <span>Coach Step</span>
@@ -2032,13 +2067,12 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                         )}
                       </div>
 
-                      {/* Previous / Next Step Navigation */}
-                      <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/60">
+                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-800/60">
                         <button
                           type="button"
                           disabled={!prevEntry}
                           onClick={() => prevEntry && setSelectedStepId(prevEntry.uidKey)}
-                          className="inline-flex items-center gap-1.5 text-xs font-mono text-slate-300 hover:text-sky-300 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                          className="min-h-[38px] px-1 inline-flex items-center gap-1.5 text-xs font-mono text-slate-300 hover:text-sky-300 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                         >
                           <ArrowLeft className="w-3.5 h-3.5" />
                           <span>{prevEntry ? `Step ${prevEntry.stepCode}` : 'Start'}</span>
@@ -2048,7 +2082,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                           type="button"
                           disabled={!nextEntry}
                           onClick={() => nextEntry && setSelectedStepId(nextEntry.uidKey)}
-                          className="inline-flex items-center gap-1.5 text-xs font-mono text-slate-300 hover:text-sky-300 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                          className="min-h-[38px] px-1 inline-flex items-center gap-1.5 text-xs font-mono text-slate-300 hover:text-sky-300 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                         >
                           <span>{nextEntry ? `Step ${nextEntry.stepCode}` : 'End'}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -2063,6 +2097,240 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                   </div>
                 )}
               </aside>
+
+              {/* Mobile / Tablet Scrollable Step Detail Sheet (opens when tapping a node card < lg) */}
+              {mobileInspectorOpen && selectedEntry && selectedDetail && (
+                <div
+                  className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end bg-black/75 backdrop-blur-[2px]"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Step detail guide"
+                >
+                  <div
+                    className="flex-1 min-h-8"
+                    onClick={() => setMobileInspectorOpen(false)}
+                    aria-hidden="true"
+                  />
+                  <div className="w-full max-h-[90dvh] bg-[#121824] border-t border-sky-500/45 rounded-t-2xl flex flex-col overflow-hidden shadow-2xl">
+                    {/* Sheet Header */}
+                    <div className="shrink-0 px-4 py-3.5 border-b border-slate-800/80 bg-[#0F1520] flex items-start justify-between gap-3">
+                      <div className="space-y-1 min-w-0">
+                        <div className="text-[11px] font-mono text-sky-400 font-semibold tabular-nums">
+                          {isAllMode ? 'PHASE' : 'STAGE'} {selectedEntry.stage.stageNumber} ·{' '}
+                          {selectedEntry.sourceDomain.toUpperCase()} · STEP{' '}
+                          {selectedEntry.stepCode} ({selectedEntry.globalIndex + 1}/
+                          {flattenedSteps.length})
+                        </div>
+                        <h3 className="font-display text-base font-semibold text-slate-50 leading-snug">
+                          {selectedEntry.step.title}
+                        </h3>
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono">
+                          <span
+                            className={
+                              selectedEntry.step.completed
+                                ? 'text-emerald-300'
+                                : nextFocusStepId === selectedEntry.uidKey
+                                ? 'text-amber-300'
+                                : 'text-slate-300'
+                            }
+                          >
+                            {selectedEntry.step.completed
+                              ? 'Completed'
+                              : nextFocusStepId === selectedEntry.uidKey
+                              ? 'Next Focus'
+                              : 'Upcoming'}
+                          </span>
+                          {selectedDetail.linkedSkill && (
+                            <>
+                              <span className="text-slate-600">·</span>
+                              <span className="text-sky-300 tabular-nums">
+                                {selectedDetail.linkedSkill.mastery}% mastery
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setMobileInspectorOpen(false)}
+                        aria-label="Close step detail"
+                        className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer shrink-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Touch-Scrollable Sheet Body */}
+                    <div
+                      ref={mobileInspectorBodyRef}
+                      className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-5"
+                    >
+                      {selectedEntry.step.completedJobTaskTag && (
+                        <div className="p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/40 text-xs text-emerald-200 font-mono">
+                          Credited via Job Task: {selectedEntry.step.completedJobTaskTag}
+                        </div>
+                      )}
+
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-sky-400">
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>Detailed Step Description</span>
+                        </div>
+                        <div className="space-y-2 text-sm text-slate-200 leading-relaxed">
+                          {selectedDetail.descriptionBlocks.map((para, idx) => (
+                            <p key={idx}>{para}</p>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 pt-3 border-t border-slate-800/80">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-300 font-semibold">
+                            Architecture &amp; Execution Guide
+                          </span>
+                          {!selectedDetail.hasNativeGuide && (
+                            <button
+                              type="button"
+                              disabled={Boolean(designingDomain)}
+                              onClick={() =>
+                                void onDesignRoadmap(
+                                  selectedEntry.sourceDomain,
+                                  focusGoalInput.trim() || undefined
+                                )
+                              }
+                              className="text-[11px] font-mono text-sky-400 hover:text-sky-300 cursor-pointer whitespace-nowrap"
+                            >
+                              Design {selectedEntry.sourceDomain} AI guide →
+                            </button>
+                          )}
+                        </div>
+                        <div className="p-3.5 rounded-lg bg-[#0B0F17] border border-slate-800/90 space-y-2 text-xs text-slate-300 leading-relaxed">
+                          {selectedDetail.guideBlocks.map((block, idx) => (
+                            <p key={idx}>{block}</p>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-amber-300">
+                          <AlertTriangle className="w-3.5 h-3.5" />
+                          <span>Production Pitfalls to Avoid</span>
+                        </div>
+                        <ul className="space-y-1.5 p-3.5 rounded-lg bg-amber-950/20 border border-amber-500/30 text-xs text-amber-100/90">
+                          {selectedDetail.pitfalls.map((pitfall, idx) => (
+                            <li key={idx} className="leading-relaxed">
+                              · {pitfall}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {selectedEntry.step.deliverables &&
+                        selectedEntry.step.deliverables.length > 0 && (
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-slate-300">
+                              <ListChecks className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>Concrete Deliverables</span>
+                            </div>
+                            <ul className="space-y-1.5 text-xs text-slate-300 pl-1">
+                              {selectedEntry.step.deliverables.map((deliv, idx) => (
+                                <li key={idx} className="flex items-start gap-2 leading-relaxed">
+                                  <span className="font-mono text-sky-400 shrink-0">
+                                    0{idx + 1}.
+                                  </span>
+                                  <span>{deliv}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                      {selectedEntry.step.labObjective && (
+                        <div className="p-3.5 rounded-lg bg-[#0B0F17] border border-sky-500/30 space-y-1">
+                          <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-sky-400">
+                            <Target className="w-3.5 h-3.5" />
+                            <span>Verification Lab Objective</span>
+                          </div>
+                          <p className="text-xs text-slate-200 leading-relaxed">
+                            {selectedEntry.step.labObjective}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Pinned Mobile Sheet Footer */}
+                    <div className="shrink-0 px-4 py-3 pb-[max(0.875rem,env(safe-area-inset-bottom))] border-t border-slate-800/80 bg-[#0F1520] space-y-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={togglingStepId === selectedEntry.uidKey}
+                          onClick={() => void handleToggleStep(selectedEntry.uidKey)}
+                          className={`flex-1 inline-flex items-center justify-center gap-1.5 px-4 min-h-[44px] rounded-lg text-xs font-semibold border transition-colors cursor-pointer whitespace-nowrap ${
+                            selectedEntry.step.completed
+                              ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200'
+                              : 'bg-sky-500 hover:bg-sky-400 border-sky-400 text-slate-950'
+                          }`}
+                        >
+                          {togglingStepId === selectedEntry.uidKey ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>Saving...</span>
+                            </>
+                          ) : selectedEntry.step.completed ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Completed</span>
+                            </>
+                          ) : (
+                            <>
+                              <Circle className="w-3.5 h-3.5" />
+                              <span>Mark Step Done</span>
+                            </>
+                          )}
+                        </button>
+
+                        {onAskJarvis && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMobileInspectorOpen(false);
+                              onAskJarvis(
+                                `Coach me in detail on ${selectedEntry.sourceDomain} roadmap step ${selectedEntry.stepCode} "${selectedEntry.step.title}" (linked skill: ${selectedEntry.step.skillTitle}). Explain internals, pitfalls, and walk me through verifying the lab objective.`
+                              );
+                            }}
+                            className="inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[44px] rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-sky-300 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                          >
+                            <Bot className="w-3.5 h-3.5" />
+                            <span>Coach</span>
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-800/60">
+                        <button
+                          type="button"
+                          disabled={!prevEntry}
+                          onClick={() => prevEntry && setSelectedStepId(prevEntry.uidKey)}
+                          className="min-h-[40px] px-1 inline-flex items-center gap-1.5 text-xs font-mono text-slate-300 hover:text-sky-300 disabled:opacity-35 cursor-pointer whitespace-nowrap"
+                        >
+                          <ArrowLeft className="w-3.5 h-3.5" />
+                          <span>{prevEntry ? `Step ${prevEntry.stepCode}` : 'Start'}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={!nextEntry}
+                          onClick={() => nextEntry && setSelectedStepId(nextEntry.uidKey)}
+                          className="min-h-[40px] px-1 inline-flex items-center gap-1.5 text-xs font-mono text-slate-300 hover:text-sky-300 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                        >
+                          <span>{nextEntry ? `Step ${nextEntry.stepCode}` : 'End'}</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             /* Detailed Linear List View (Filtered Stages Expanded with Full Descriptions) */
@@ -2199,14 +2467,14 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                                 </h4>
                               </div>
 
-                              <div className="flex items-center gap-2 shrink-0">
+                              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
                                 <button
                                   type="button"
                                   onClick={() => {
                                     setSelectedStepId(uidKey);
                                     setViewMode('graph');
                                   }}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                                  className="inline-flex items-center justify-center gap-1.5 px-3 min-h-[38px] sm:min-h-0 py-1.5 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
                                 >
                                   <GitBranch className="w-3.5 h-3.5 text-sky-400" />
                                   <span>View in Graph</span>
@@ -2220,7 +2488,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                                         `Coach me on my ${sourceDomain} roadmap step "${step.title}" (linked skill: ${step.skillTitle}). Give me exact production internals and how to verify the lab objective.`
                                       )
                                     }
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-sky-300 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                                    className="inline-flex items-center justify-center gap-1.5 px-3 min-h-[38px] sm:min-h-0 py-1.5 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-sky-300 transition-colors cursor-pointer whitespace-nowrap shrink-0"
                                   >
                                     <Bot className="w-3.5 h-3.5" />
                                     <span>Coach Step</span>
@@ -2231,7 +2499,7 @@ export const RoadmapsPage: React.FC<RoadmapsPageProps> = ({
                                   type="button"
                                   disabled={isBusy}
                                   onClick={() => void handleToggleStep(uidKey)}
-                                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                                  className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[38px] sm:min-h-0 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                                     step.completed
                                       ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/25'
                                       : 'bg-sky-500 hover:bg-sky-400 border-sky-400 text-slate-950'

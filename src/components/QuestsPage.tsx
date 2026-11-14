@@ -360,8 +360,8 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
 
       {/* System Quest Summary Header */}
       <section className="bg-[#121824] border border-sky-500/35 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
-          <div className="space-y-1">
+        <div className="p-4 sm:px-6 sm:py-4 border-b border-slate-800/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2 text-xs font-mono text-sky-400">
               <Swords className="w-4 h-4 shrink-0" />
               <span>DAILY SYSTEM QUESTS</span>
@@ -370,61 +370,61 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
               </span>
               <span className="tabular-nums">{todayKey}</span>
             </div>
-            <h2 className="font-display text-lg font-semibold text-slate-50">
+            <h2 className="font-display text-base sm:text-lg font-semibold text-slate-50">
               {activeProject
                 ? `Project Priority: ${activeProject.projectName}`
                 : `Normal Routine: ${todayDayKey} (${todaySlot})`}
             </h2>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
             {onOpenRecall && (
               <button
                 type="button"
                 onClick={onOpenRecall}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800/70 text-xs font-semibold text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0 tabular-nums"
+                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800/70 text-xs font-semibold text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0 tabular-nums"
               >
-                <Brain className="w-3.5 h-3.5 text-sky-400" />
-                <span>Recall ({dueCardsCount} due)</span>
+                <Brain className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                <span>Recall ({dueCardsCount})</span>
               </button>
             )}
             <button
               type="button"
               onClick={() => onNavigate('roadmaps', focusDomain)}
-              className="px-3.5 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800/70 text-xs font-semibold text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="inline-flex items-center justify-center px-3 sm:px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800/70 text-xs font-semibold text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               {focusDomain} Roadmap
             </button>
             <button
               type="button"
               onClick={() => onNavigate('upload')}
-              className="px-3.5 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-semibold text-sky-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="inline-flex items-center justify-center px-3 sm:px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-xs font-semibold text-sky-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
-              Upload Project Task
+              Upload Task
             </button>
             <button
               type="button"
               onClick={handleRegenerateToday}
               disabled={busyGenerating}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800/70 disabled:opacity-50 text-xs font-medium text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800/70 disabled:opacity-50 text-xs font-medium text-slate-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${busyGenerating ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${busyGenerating ? 'animate-spin' : ''}`} />
               <span>{busyGenerating ? 'Issuing...' : 'Refresh Quests'}</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-slate-800/80">
-          <div className="p-5 space-y-1">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-slate-800/80">
+          <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
             <div className="text-xs text-slate-400">Rank &amp; Level</div>
-            <div className="font-mono text-xl font-semibold text-sky-300 tabular-nums">
+            <div className="font-mono text-lg sm:text-xl font-semibold text-sky-300 tabular-nums">
               Lv. {hunterStats.level}
             </div>
-            <div className="text-xs font-mono text-slate-400">{hunterStats.rank}</div>
+            <div className="text-xs font-mono text-slate-400 truncate">{hunterStats.rank}</div>
           </div>
 
-          <div className="p-5 space-y-1.5">
-            <div className="flex items-center justify-between text-xs text-slate-400">
+          <div className="bg-[#121824] p-4 sm:p-5 space-y-1.5">
+            <div className="flex items-center justify-between gap-1 text-xs text-slate-400">
               <span>System XP</span>
               <span className="font-mono tabular-nums text-slate-300">
                 {hunterStats.totalXp} XP
@@ -443,9 +443,9 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
             </div>
           </div>
 
-          <div className="p-5 space-y-1">
+          <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
             <div className="text-xs text-slate-400">Today&apos;s Quests</div>
-            <div className="font-mono text-xl font-semibold text-slate-50 tabular-nums">
+            <div className="font-mono text-lg sm:text-xl font-semibold text-slate-50 tabular-nums">
               {todayProgress.completed} / {todayProgress.total}
             </div>
             <div className="text-xs font-mono text-emerald-400 tabular-nums">
@@ -453,9 +453,9 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
             </div>
           </div>
 
-          <div className="p-5 space-y-1">
-            <div className="text-xs text-slate-400">Milestones Unlocked</div>
-            <div className="font-mono text-xl font-semibold text-slate-50 tabular-nums">
+          <div className="bg-[#121824] p-4 sm:p-5 space-y-1">
+            <div className="text-xs text-slate-400">Milestones</div>
+            <div className="font-mono text-lg sm:text-xl font-semibold text-slate-50 tabular-nums">
               {unlockedCount} / {milestones.length}
             </div>
             <button
@@ -463,7 +463,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
               onClick={() => onNavigate('profile')}
               className="text-xs text-sky-400 hover:text-sky-300 inline-flex items-center gap-1 cursor-pointer"
             >
-              <span>View all progress</span>
+              <span>View progress</span>
               <ArrowUpRight className="w-3 h-3" />
             </button>
           </div>
@@ -472,7 +472,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
 
       {/* Active Project Priority Mission Banner */}
       {activeProject && (
-        <section className="bg-[#121824] border border-amber-500/35 rounded-xl p-5 flex flex-wrap items-center justify-between gap-4">
+        <section className="bg-[#121824] border border-amber-500/35 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1 max-w-2xl">
             <div className="text-xs font-mono text-amber-400">
               {activeProject.rank} Active Project Override · {activeProject.primaryDomain}
@@ -487,7 +487,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
             type="button"
             onClick={handleCompleteProjectMission}
             disabled={completingMission}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 min-h-[44px] sm:min-h-0 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-slate-950 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
           >
             {completingMission ? (
               <>
@@ -497,7 +497,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
             ) : (
               <>
                 <Flag className="w-3.5 h-3.5" />
-                <span>Complete Project &amp; Resume Normal Routine</span>
+                <span>Complete Project &amp; Resume</span>
               </>
             )}
           </button>
@@ -508,8 +508,8 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Daily Quests */}
         <section className="lg:col-span-7 bg-[#121824] border border-slate-800/80 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between gap-3">
-            <div>
+          <div className="px-4 sm:px-6 py-4 border-b border-slate-800/80 flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <h3 className="font-display text-base font-semibold text-slate-100">
                 Today&apos;s Tasks
               </h3>
@@ -517,7 +517,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
                 Automatically updated daily — complete quests to earn XP and advance mastery
               </p>
             </div>
-            <span className="font-mono text-xs text-slate-400 tabular-nums">
+            <span className="font-mono text-xs text-slate-400 tabular-nums shrink-0">
               {todayProgress.completed}/{todayProgress.total} done
             </span>
           </div>
@@ -538,7 +538,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
               <button
                 type="button"
                 onClick={handleRegenerateToday}
-                className="px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 min-h-[42px] rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-semibold cursor-pointer"
               >
                 Generate Today&apos;s Quests
               </button>
@@ -556,7 +556,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
                     ref={(el) => {
                       questRefs.current[quest.id] = el;
                     }}
-                    className={`p-5 space-y-3 transition-colors ${
+                    className={`p-4 sm:p-5 space-y-3 transition-colors ${
                       isFocused
                         ? 'bg-sky-500/[0.06] ring-1 ring-inset ring-sky-400/70'
                         : isDone
@@ -564,7 +564,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
                         : 'hover:bg-slate-800/20'
                     }`}
                   >
-                    <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                       <div className="space-y-1 min-w-0 flex-1">
                         <div className="text-xs font-mono text-slate-400 tabular-nums">
                           {isFocused && (
@@ -599,7 +599,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
                         </h4>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
                         {onAskJarvis && (
                           <button
                             type="button"
@@ -608,7 +608,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
                                 `Guide me step-by-step on "${quest.title}" (${quest.domain}) and resolve any key production pitfalls.`
                               )
                             }
-                            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-sky-300 transition-colors cursor-pointer whitespace-nowrap"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 min-h-[42px] sm:min-h-0 py-2 rounded-lg border border-slate-700/80 bg-[#0B0F17] hover:bg-slate-800 text-xs font-medium text-sky-300 transition-colors cursor-pointer whitespace-nowrap"
                           >
                             <Bot className="w-3.5 h-3.5" />
                             <span>Ask JARVIS</span>
@@ -619,7 +619,7 @@ export const QuestsPage: React.FC<QuestsPageProps> = ({
                           type="button"
                           disabled={isDone || busy}
                           onClick={() => handleCompleteQuest(quest)}
-                          className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                          className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 min-h-[42px] sm:min-h-0 py-2 rounded-lg text-xs font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                             isDone
                               ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 cursor-default'
                               : 'bg-sky-500 hover:bg-sky-400 border-sky-400 text-slate-950'

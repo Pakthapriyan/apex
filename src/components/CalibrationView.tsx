@@ -42,9 +42,9 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ profile, skill
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] text-[#F1F5F9] px-6 py-10">
-      <div className="max-w-3xl mx-auto space-y-8">
-        <div className="space-y-2 border-b border-slate-800/80 pb-6">
+    <div className="min-h-screen bg-[#0B0F17] text-[#F1F5F9] px-4 py-6 sm:px-6 sm:py-10">
+      <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
+        <div className="space-y-2 border-b border-slate-800/80 pb-5 sm:pb-6">
           <div className="flex items-center gap-2 text-xs font-mono text-sky-400">
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span>Initial Baseline Calibration</span>
@@ -59,8 +59,8 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ profile, skill
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#121824] border border-slate-800/80 rounded-xl p-6">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 bg-[#121824] border border-slate-800/80 rounded-xl p-4 sm:p-6">
             <div className="space-y-2">
               <label htmlFor="roleTitle" className="block text-xs font-medium text-slate-300">
                 Current Role Title
@@ -113,7 +113,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ profile, skill
             {DOMAINS.map((domain) => (
               <div
                 key={domain}
-                className="px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                className="px-4 sm:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4"
               >
                 <div className="min-w-0">
                   <div className="font-medium text-sm text-slate-100">{domain}</div>
@@ -130,7 +130,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ profile, skill
                         key={preset.label}
                         type="button"
                         onClick={() => setRatings((prev) => ({ ...prev, [domain]: preset.score }))}
-                        className={`px-3 py-2 rounded-lg text-left border transition-colors cursor-pointer ${
+                        className={`px-3 py-2 min-h-[44px] rounded-lg text-left border transition-colors cursor-pointer ${
                           active
                             ? 'bg-sky-500/15 border-sky-500/70 text-sky-200'
                             : 'bg-[#0B0F17] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
@@ -156,7 +156,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ profile, skill
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:opacity-60 text-slate-950 font-semibold text-sm transition-colors cursor-pointer whitespace-nowrap"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 min-h-[44px] py-2.5 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:opacity-60 text-slate-950 font-semibold text-sm transition-colors cursor-pointer whitespace-nowrap"
             >
               <Check className="w-4 h-4" />
               <span>{saving ? 'Initializing console...' : 'Initialize Mastery Console'}</span>
